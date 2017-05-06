@@ -1,5 +1,14 @@
 {
-  "manifest_version": 2,
-  "name": "alias",
-  "version": "0.1"
+  "name": "Alias",
+  "version": "1.0.3",
+  "manifest_version": 4,
+  "background": {
+    "scripts": ["inject.js"]
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "storage",
+    "unlimitedStorage"
+  ]
 }
