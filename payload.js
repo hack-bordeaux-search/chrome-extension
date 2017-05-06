@@ -6,6 +6,20 @@ var shouldRecord = false;
 var textElement = null;
 var defaultStyle = {};
 
+function performRequest(input, service, callback) {
+    var url = "https://myalias.herokuapp.com/alias/" + input + "test?service=", service;
+
+    var http = new XMLHttpRequest();
+    http.open("GET", url, true);
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    http.onreadystatechange = function () {
+        if (http.readyState == 4 && http.status == 200) {
+            callback(JSON.parse(http.responseText));
+        } else callback(null);
+    }
+    http.send();
+}
+
 document.addEventListener('keypress', function (e) {
     e = e || window.event;
     var charCode = typeof e.which == "number" ? e.which : e.keyCode;
@@ -30,6 +44,11 @@ function reset() {
     defaultStyle = {};
 }
 
+function service() {
+    const url = document.location.href;
+    return url.split("://")[1].split(".")[0];
+}
+
 function log(input) {
     var now = new Date().getTime();
     if (now - lastLog < 10) return;
@@ -46,6 +65,10 @@ function log(input) {
         }
         document.activeElement.style.color = "white";
         document.activeElement.style.backgroundColor = "#1D62F0";
+        const value = data.split("!@")[1];
+        performRequest(value, service(), function(result) {
+            console.log(result);
+        });
     } else if ((data.length == 0 && input == '!') || (data.length == 1 && input == '@')) {
         data += input;
         reset();
