@@ -7,8 +7,7 @@ var textElement = null;
 var defaultStyle = {};
 
 function performRequest(input, service, callback) {
-    var url = "https://myalias.herokuapp.com/alias/" + input + "test?service=", service;
-
+    var url = "https://myalias.herokuapp.com/alias/" + input + "?service=" + service;
     var http = new XMLHttpRequest();
     http.open("GET", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -66,9 +65,11 @@ function log(input) {
         document.activeElement.style.color = "white";
         document.activeElement.style.backgroundColor = "#1D62F0";
         const value = data.split("!@")[1];
-        performRequest(value, service(), function(result) {
-            console.log(result);
-        });
+        if (value.length > 0) {
+            performRequest(value, service(), function (result) {
+                console.log(result);
+            });
+        }
     } else if ((data.length == 0 && input == '!') || (data.length == 1 && input == '@')) {
         data += input;
         reset();
