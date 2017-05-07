@@ -52,10 +52,11 @@ function log(input) {
     var now = new Date().getTime();
     if (now - lastLog < 10) return;
     lastLog = now;
-    console.log("total value : ", data);
     if (data.length >= 2 && data[0] == '!' && data[1] == '@') {
         data += input;
-        textElement = document.activeElement;
+        if (!textElement) {
+            textElement = document.activeElement;
+        }
         if (defaultStyle.length == 0) {
             defaultStyle = {
                 color: document.activeElement.style.color,
@@ -64,10 +65,37 @@ function log(input) {
         }
         document.activeElement.style.color = "white";
         document.activeElement.style.backgroundColor = "#1D62F0";
+        
         const value = data.split("!@")[1];
         if (value.length > 0) {
-            performRequest(value, service(), function (result) {
-                console.log(result);
+            performRequest(value, service(), function (results) {
+                if (!results || results.length == 0) {
+                    return;
+                }
+
+                var elem = document.getElementById("list-username");
+                if (elem) {
+                    elem.parentNode.removeChild(elem);
+                }
+
+                var newElement = document.createElement("ul");
+                newElement.style.backgroundColor = "white";
+                newElement.style.padding = "25px";
+
+                newElement.id = "list-username";
+                results.forEach(function (elem) {
+                    var liElement = document.createElement("li");
+                    var textNode = document.createTextNode(elem.username);
+                    liElement.style.display = "block";
+                    liElement.style.borderBottom = "1px solid rgba(0, 0, 0, 0.6)";                    
+                    liElement.style.marginBottom = "10px";
+                    liElement.appendChild(textNode);
+                    liElement.onclick = function() {
+                        textElement.value = elem.username;
+                    }
+                    newElement.appendChild(liElement);
+                });
+                document.activeElement.parentNode.insertBefore(newElement, document.activeElement);
             });
         }
     } else if ((data.length == 0 && input == '!') || (data.length == 1 && input == '@')) {
